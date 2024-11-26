@@ -1,1 +1,1 @@
-rootProject.name = "ERPSystem-phase3-FinanceHR"
+rootProject.name = "ERPSystem-phase3-Common"

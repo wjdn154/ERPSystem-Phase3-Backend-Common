@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ERPSystem-phase3-FinanceHR
+    name: ERPSystem-phase3-Common
   datasource:
     hikari:
       maximum-pool-size: 10
@@ -21,8 +21,8 @@ spring:
         highlight_sql: true #신규
         dialect: org.hibernate.dialect.MySQLDialect
         multi-tenancy: SCHEMA # 멀티 테넌시 설정 (스키마 기반)
-        tenant_identifier_resolver: com.megazone.ERPSystem_phase3_FinanceHR.common.config.multi_tenant.SchemaBasedTenantIdentifierResolver
-        multi_tenant_connection_provider: com.megazone.ERPSystem_phase3_FinanceHR.common.config.multi_tenant.SchemaBasedMultiTenantConnectionProvider
+        tenant_identifier_resolver: com.megazone.ERPSystem_phase3_Common.common.config.multi_tenant.SchemaBasedTenantIdentifierResolver
+        multi_tenant_connection_provider: com.megazone.ERPSystem_phase3_Common.common.config.multi_tenant.SchemaBasedMultiTenantConnectionProvider
     show-sql: false # SQL 쿼리를 콘솔에 출력하도록 설정
     defer-datasource-initialization: true # 데이터베이스 초기화를 지연시켜, 스키마 생성 후 데이터 초기화가 이루어지도록 설정
   web:
@@ -110,7 +110,3 @@ logging:
 #    org.hibernate.SQL: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %highlight(%-5level) %logger{36} - %msg%n"
-
-server:
-  http2:
-    enabled: true
