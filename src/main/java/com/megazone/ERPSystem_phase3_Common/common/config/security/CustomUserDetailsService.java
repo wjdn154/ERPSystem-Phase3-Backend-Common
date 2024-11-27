@@ -1,8 +1,8 @@
 package com.megazone.ERPSystem_phase3_Common.common.config.security;
 
 import com.megazone.ERPSystem_phase3_Common.common.config.multi_tenant.TenantContext;
-import com.megazone.ERPSystem_phase3_Common.hr.model.basic_information_management.employee.Users;
-import com.megazone.ERPSystem_phase3_Common.hr.repository.basic_information_management.Users.UsersRepository;
+import com.megazone.ERPSystem_phase3_Common.user.model.basic_information_management.employee.Users;
+import com.megazone.ERPSystem_phase3_Common.user.repository.basic_information_management.Users.UsersRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

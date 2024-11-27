@@ -2,18 +2,18 @@ package com.megazone.ERPSystem_phase3_Common.Integrated.service.notification;
 
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.Notification;
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.UserNotification;
+import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.dto.UserNotificationCreateAndSendDTO;
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.dto.UserNotificationSearchDTO;
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.dto.UserSubscriptionDTO;
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.enums.ModuleType;
-import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.enums.NotificationType;
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.enums.PermissionType;
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.enums.Subscription;
 import com.megazone.ERPSystem_phase3_Common.Integrated.repository.notification.NotificationRepository;
 import com.megazone.ERPSystem_phase3_Common.Integrated.repository.notification.UserNotificationRepository;
 import com.megazone.ERPSystem_phase3_Common.common.config.multi_tenant.TenantContext;
-import com.megazone.ERPSystem_phase3_Common.hr.model.basic_information_management.employee.Users;
-import com.megazone.ERPSystem_phase3_Common.hr.model.basic_information_management.employee.enums.UserPermission;
-import com.megazone.ERPSystem_phase3_Common.hr.repository.basic_information_management.Users.UsersRepository;
+import com.megazone.ERPSystem_phase3_Common.user.model.basic_information_management.employee.Users;
+import com.megazone.ERPSystem_phase3_Common.user.model.basic_information_management.employee.enums.UserPermission;
+import com.megazone.ERPSystem_phase3_Common.user.repository.basic_information_management.Users.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -74,15 +74,15 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     public UserSubscriptionDTO getUserSubscriptionInfo(Long employeeId, boolean isAdmin) {
         Users users = usersRepository.findByEmployeeId(employeeId).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        String departmentName = users.getEmployee().getDepartment().getDepartmentName();
 
         // 모듈 및 권한 설정 로직
-        ModuleType module = isAdmin ? ModuleType.ALL : switch (users.getEmployee().getDepartment().getDepartmentName()) {
+        ModuleType module = isAdmin ? ModuleType.ALL : switch (departmentName) {
             case "인사부" -> ModuleType.HR;
             case "재무부" -> ModuleType.FINANCE;
             case "생산부" -> ModuleType.PRODUCTION;
             case "물류부" -> ModuleType.LOGISTICS;
-            default -> null;
-        };
+            default -> null;};
 
         PermissionType permission = isAdmin ? PermissionType.ALL : (users.getPermission().getAdminPermission() == UserPermission.ADMIN ? PermissionType.ADMIN : PermissionType.USER);
 
@@ -161,13 +161,13 @@ public class NotificationServiceImpl implements NotificationService {
     // 알림 생성 및 전송 통합
     @Override
     @Transactional
-    public Notification createAndSendNotification(ModuleType module, PermissionType permission, String content, NotificationType type) {
+    public Notification createAndSendNotification(UserNotificationCreateAndSendDTO requestData) {
         // 알림 생성
         Notification notification= Notification.builder()
-                .module(module)
-                .permission(permission)
-                .content(content)
-                .type(type)
+                .module(requestData.getModuleType())
+                .permission(requestData.getPermissionType())
+                .content(requestData.getNotificationDescription())
+                .type(requestData.getNotificationType())
                 .createAt(LocalDateTime.now())
                 .build();
         notificationRepository.save(notification);

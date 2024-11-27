@@ -1,5 +1,6 @@
 package com.megazone.ERPSystem_phase3_Common.Integrated.controller.notification;
 
+import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.dto.UserNotificationCreateAndSendDTO;
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.dto.UserNotificationSearchDTO;
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.dto.UserSubscriptionDTO;
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.enums.ModuleType;
@@ -85,5 +86,14 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.OK).body(markAsRead);
     }
 
+    @PostMapping("createAndSend")
+    public ResponseEntity<Object> createAndSend(@RequestBody UserNotificationCreateAndSendDTO requestData) {
+        try {
+            notificationService.createAndSendNotification(requestData);
+            return ResponseEntity.status(HttpStatus.OK).body(requestData.getNotificationDescription());
+        }catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 
 }

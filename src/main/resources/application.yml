@@ -1,3 +1,5 @@
+server:
+  port: 8082
 spring:
   application:
     name: ERPSystem-phase3-Common
@@ -41,63 +43,15 @@ spring:
       mode: never
       data-locations:
         - classpath:initial-database/financial/common/financial_contact.sql
+        - classpath:initial-database/financial/company/company_address.sql
         - classpath:initial-database/financial/company/company_tax_office.sql
         - classpath:initial-database/financial/company/company_main_business.sql
-        - classpath:initial-database/financial/company/company_address.sql
         - classpath:initial-database/financial/company/company_corporate_kind.sql
         - classpath:initial-database/financial/company/company_corporate_type.sql
         - classpath:initial-database/financial/company/company_representative.sql
         - classpath:initial-database/financial/company/company.sql
-        - classpath:initial-database/financial/account_subject/account_subject_structure.sql
-        - classpath:initial-database/financial/account_subject/account_subject_nature.sql
-        - classpath:initial-database/financial/account_subject/account_subject_Standard_financial_statement.sql
-        - classpath:initial-database/financial/account_subject/account_subject.sql
-        - classpath:initial-database/financial/account_subject/account_subject_cash_memo.sql
-        - classpath:initial-database/financial/account_subject/account_subject_fixed_memo.sql
-        - classpath:initial-database/financial/account_subject/account_subject_transfer_memo.sql
-        - classpath:initial-database/financial/common/financial_bank.sql
-        - classpath:initial-database/financial/client/client_category.sql
-        - classpath:initial-database/financial/bank_account/bank_account_type.sql
-        - classpath:initial-database/financial/common/financial_address.sql
-        - classpath:initial-database/financial/common/financial_bank_account.sql
-        - classpath:initial-database/financial/vat_type.sql
-        - classpath:initial-database/financial/journal_entry_type_setup.sql
-        - classpath:initial-database/financial/journal_entry.sql
-
-
         - classpath:initial-database/hr/employee.sql
-        - classpath:initial-database/hr/role.sql
-        - classpath:initial-database/hr/attendance_management.sql
-        - classpath:initial-database/hr/requirement_management/JobPosting.sql
-
-        - classpath:initial-database/financial/client/client_contact_info.sql
-        - classpath:initial-database/financial/client/client_bank_account.sql
-        - classpath:initial-database/financial/client/client_business_info.sql
-        - classpath:initial-database/financial/client/client_financial_info.sql
-        - classpath:initial-database/financial/client/client_manager_info.sql
-        - classpath:initial-database/financial/client/client_liquor.sql
-        - classpath:initial-database/financial/client/client.sql
         - classpath:initial-database/hr/users.sql
-        - classpath:initial-database/financial/unresolved_sale_and_purchase_voucher.sql
-        - classpath:initial-database/financial/unresolved_voucher.sql
-        - classpath:initial-database/financial/resolved_sale_and_purchase_voucher.sql
-        - classpath:initial-database/financial/resolved_voucher.sql
-
-        - classpath:initial-database/hr/payment/employee_allowance.sql
-        - classpath:initial-database/hr/payment/employee_salary_step.sql
-        - classpath:initial-database/hr/payment/employee_position_salary_step.sql
-        - classpath:initial-database/hr/payment/position_salary_step_allowance.sql
-
-        - classpath:initial-database/hr/payment/employment_insurance_pension.sql
-        - classpath:initial-database/hr/payment/health_insurance_pension.sql
-        - classpath:initial-database/hr/payment/national_pension.sql
-        - classpath:initial-database/hr/payment/long_term_care_insurance_pension.sql
-        - classpath:initial-database/hr/payment/salary_ledger_date.sql
-        - classpath:initial-database/hr/payment/employee_income_tax.sql
-        - classpath:initial-database/hr/payment/salary_ledger.sql
-        - classpath:initial-database/hr/payment/salary_ledger_allowance.sql
-
-        - classpath:initial-database/hr/payment/salary.sql
 
 
 logging:

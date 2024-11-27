@@ -59,8 +59,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // CORS 설정 적용
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/hr/auth/**").permitAll()
-                        .requestMatchers("/api/financial/company/**").permitAll()
+                        .requestMatchers("/api/common/auth/**").permitAll()
+                        .requestMatchers("/api/common/company/**").permitAll()
                         .requestMatchers("/api/notifications/subscribe").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()

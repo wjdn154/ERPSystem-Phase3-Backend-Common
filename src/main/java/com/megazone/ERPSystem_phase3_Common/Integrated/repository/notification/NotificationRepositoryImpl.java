@@ -5,7 +5,7 @@ import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.QUserN
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.dto.UserNotificationDTO;
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.enums.ModuleType;
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.notification.enums.PermissionType;
-import com.megazone.ERPSystem_phase3_Common.hr.model.basic_information_management.employee.QUsers;
+import com.megazone.ERPSystem_phase3_Common.user.model.basic_information_management.employee.QUsers;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
