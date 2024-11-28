@@ -36,9 +36,10 @@ public class NotificationController {
             @RequestParam("employeeId") Long employeeId,
             @RequestParam("tenantId") String tenantId,
             @RequestParam("module") ModuleType module,
-            @RequestParam("permission") PermissionType permission) {
+            @RequestParam("permission") PermissionType permission,
+            @RequestParam("uuid") String uuid) {
 
-        SseEmitter emitter = notificationService.subscribe(employeeId, tenantId, module, permission);
+        SseEmitter emitter = notificationService.subscribe(employeeId, tenantId, module, permission,uuid);
 
         try {
             emitter.send(SseEmitter.event().name("subscribe").data("구독이 성공적으로 연결되었습니다."));
@@ -50,9 +51,11 @@ public class NotificationController {
     }
 
     @PostMapping("/unsubscribe")
-    public ResponseEntity<Void> unsubscribe(@RequestBody Map<String, Long> request) {
-        Long employeeId = request.get("employeeId");
-        notificationService.removeEmitter(employeeId);
+    public ResponseEntity<Void> unsubscribe(
+            @RequestParam("employeeId") Long employeeId,
+            @RequestParam("uuid") String uuid) {
+//        Long employeeId = request.get("employeeId");
+        notificationService.removeEmitter(employeeId,uuid);
         return ResponseEntity.ok().build();
     }
 

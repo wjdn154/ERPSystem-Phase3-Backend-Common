@@ -20,11 +20,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,15 +39,18 @@ public class NotificationServiceImpl implements NotificationService {
     private final UserNotificationRepository userNotificationRepository;
     private final Map<String, Subscription> emitters = new ConcurrentHashMap<>();
     private final UsersRepository usersRepository;
+    private static final Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class);
+
+    private static final ScheduledExecutorService sharedExecutor = Executors.newScheduledThreadPool(10);
 
     // 사용자 구독 관리
     // 사용자 구독 관리
     @Override
-    public SseEmitter subscribe(Long employeeId, String tenantId, ModuleType module, PermissionType permission) {
+    public SseEmitter subscribe(Long employeeId, String tenantId, ModuleType module, PermissionType permission, String uuid) {
 
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
 
-        String key = tenantId + "_" + employeeId;
+        String key = tenantId + "_" + employeeId + "_" + uuid;
         Subscription subscription = new Subscription(emitter, module, permission);
         emitters.put(key, subscription);
 
@@ -59,6 +66,7 @@ public class NotificationServiceImpl implements NotificationService {
         executor.scheduleAtFixedRate(() -> {
             try {
                 emitter.send(SseEmitter.event().data("keep-alive"));
+                System.out.println(emitter);
             } catch (Exception e) {
                 System.out.println(key + ", Keep-Alive 이벤트 전송 실패: " + e.getMessage());
                 emitters.remove(key);
@@ -68,7 +76,72 @@ public class NotificationServiceImpl implements NotificationService {
 
         return emitter;
     }
-
+//// 타임아웃을 무제한으로 설정 (-1L)
+//        long timeout = -1L; // 무제한
+//        SseEmitter emitter = new SseEmitter(timeout);
+//
+//        String key = tenantId + "_" + employeeId + "_" + uuid;
+//        Subscription subscription = new Subscription(emitter, module, permission);
+//
+//        synchronized (emitters) {
+//            emitters.put(key, subscription);
+//        }
+//
+//// Keep-Alive 작업
+//        AtomicReference<ScheduledFuture<?>> futureRef = new AtomicReference<>();
+//
+//        futureRef.set(sharedExecutor.scheduleAtFixedRate(() -> {
+//            try {
+//                synchronized (emitters) {
+//                    if (!emitters.containsKey(key)) {
+//                        logger.warn("{} emitter가 이미 제거되었습니다. 전송을 중단합니다.", key);
+//                        return;
+//                    }
+//                    emitter.send(SseEmitter.event().data("keep-alive"));
+//                }
+//            } catch (IOException e) {
+//                logger.warn("{} Keep-Alive 전송 실패: 클라이언트 연결 종료 감지. {}", key, e.getMessage());
+//                synchronized (emitters) {
+//                    emitters.remove(key);
+//                }
+//                emitter.complete();
+//                cancelFuture(futureRef);
+//            } catch (Exception e) {
+//                logger.error("{} 예상치 못한 오류 발생: {}", key, e.getMessage());
+//                synchronized (emitters) {
+//                    emitters.remove(key);
+//                }
+//                emitter.completeWithError(e);
+//                cancelFuture(futureRef);
+//            }
+//        }, 0, 15, TimeUnit.SECONDS)); // 15초 간격 Keep-Alive
+//
+//// emitter 종료 시 작업
+//        emitter.onCompletion(() -> {
+//            synchronized (emitters) {
+//                logger.info("{} 연결 정상 종료", key);
+//                emitters.remove(key);
+//            }
+//            cancelFuture(futureRef);
+//        });
+//
+//        emitter.onError(e -> {
+//            synchronized (emitters) {
+//                logger.error("{} 연결 오류 발생: {}", key, e.getMessage());
+//                emitters.remove(key);
+//            }
+//            cancelFuture(futureRef);
+//        });
+//
+//        return emitter;
+//
+//    }
+//    private void cancelFuture(AtomicReference<ScheduledFuture<?>> futureRef) {
+//        ScheduledFuture<?> future = futureRef.get();
+//        if (future != null) {
+//            future.cancel(true); // 작업 중단
+//        }
+//    }
     // 트랜잭션 내에서 사용자 정보 조회
     @Override
     @Transactional
@@ -82,7 +155,8 @@ public class NotificationServiceImpl implements NotificationService {
             case "재무부" -> ModuleType.FINANCE;
             case "생산부" -> ModuleType.PRODUCTION;
             case "물류부" -> ModuleType.LOGISTICS;
-            default -> null;};
+            default -> null;
+        };
 
         PermissionType permission = isAdmin ? PermissionType.ALL : (users.getPermission().getAdminPermission() == UserPermission.ADMIN ? PermissionType.ADMIN : PermissionType.USER);
 
@@ -90,8 +164,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void removeEmitter(Long employeeId) {
-        String key = TenantContext.getCurrentTenant() + "_" + employeeId;
+    public void removeEmitter(Long employeeId, String uuid) {
+        String key = TenantContext.getCurrentTenant() + "_" + employeeId + "_" + uuid;
         Subscription subscription = emitters.get(key);
         if (subscription != null) {
             emitters.remove(key);
@@ -197,6 +271,7 @@ public class NotificationServiceImpl implements NotificationService {
                     (isForAllModules || subscription.getModule() == notification.getModule()) &&
                     (isForAllPermissions || subscription.getPermission() == notification.getPermission())) {
                 try {
+                    System.out.println(subscription.getEmitter());
                     subscription.getEmitter().send(SseEmitter.event().name("notification").data(notification.getContent()));
                 } catch (Exception e) {
                     subscription.getEmitter().completeWithError(e);
