@@ -20,7 +20,7 @@ public class LogisticServiceImpl implements LogisticService {
 
         try {
             BigDecimal response =  logisticsServiceClient.post()
-                    .uri("inventoryCount")
+                    .uri("inventory/inventoryCount")
                     .header("Authorization", "Bearer " + token)
                     .retrieve()
                     .body(BigDecimal.class);

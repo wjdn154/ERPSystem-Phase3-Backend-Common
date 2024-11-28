@@ -52,6 +52,7 @@ spring:
         - classpath:initial-database/financial/company/company.sql
         - classpath:initial-database/hr/employee.sql
         - classpath:initial-database/hr/users.sql
+        - classpath:initial-database/environmental_certification_assessment.sql
 
 
 logging:
