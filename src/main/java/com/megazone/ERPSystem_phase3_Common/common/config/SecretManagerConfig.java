@@ -43,12 +43,12 @@ public class SecretManagerConfig {
 //                getCachedSecret("omz-env-secrets-backend", "RDS_FINANCIAL_HR_WRITER_DB_URL"),
 //                getCachedSecret("omz-env-secrets-backend", "RDS_DB_USER"),
 //                getCachedSecret("omz-env-secrets-backend", "RDS_DB_PASSWORD")
-                getSecretValueFromJson("omz-env-secrets-backend", "CLUSTER_FINANCIAL_HR_DB_URL"),
-                getSecretValueFromJson("omz-env-secrets-backend", "CLUSTER_DB_USER"),
-                getSecretValueFromJson("omz-env-secrets-backend", "CLUSTER_DB_PASSWORD")
-//                getSecretValueFromJson("omz-env-secrets-backend", "LOCAL_FINANCIAL_HR_DB_URL"),
-//                getSecretValueFromJson("omz-env-secrets-backend", "LOCAL_DB_USER"),
-//                getSecretValueFromJson("omz-env-secrets-backend", "LOCAL_DB_PASSWORD")
+//                getSecretValueFromJson("omz-env-secrets-backend", "CLUSTER_FINANCIAL_HR_DB_URL"),
+//                getSecretValueFromJson("omz-env-secrets-backend", "CLUSTER_DB_USER"),
+//                getSecretValueFromJson("omz-env-secrets-backend", "CLUSTER_DB_PASSWORD")
+                getSecretValueFromJson("omz-env-secrets-backend", "LOCAL_FINANCIAL_HR_DB_URL"),
+                getSecretValueFromJson("omz-env-secrets-backend", "LOCAL_DB_USER"),
+                getSecretValueFromJson("omz-env-secrets-backend", "LOCAL_DB_PASSWORD")
         );
     }
 
@@ -57,12 +57,12 @@ public class SecretManagerConfig {
 //                getCachedSecret("omz-env-secrets-backend", "RDS_FINANCIAL_HR_READER_DB_URL"),
 //                getCachedSecret("omz-env-secrets-backend", "RDS_DB_USER"),
 //                getCachedSecret("omz-env-secrets-backend", "RDS_DB_PASSWORD")
-                getSecretValueFromJson("omz-env-secrets-backend", "CLUSTER_FINANCIAL_HR_DB_URL"),
-                getSecretValueFromJson("omz-env-secrets-backend", "CLUSTER_DB_USER"),
-                getSecretValueFromJson("omz-env-secrets-backend", "CLUSTER_DB_PASSWORD")
-//                getSecretValueFromJson("omz-env-secrets-backend", "LOCAL_FINANCIAL_HR_DB_URL"),
-//                getSecretValueFromJson("omz-env-secrets-backend", "LOCAL_DB_USER"),
-//                getSecretValueFromJson("omz-env-secrets-backend", "LOCAL_DB_PASSWORD")
+//                getSecretValueFromJson("omz-env-secrets-backend", "CLUSTER_FINANCIAL_HR_DB_URL"),
+//                getSecretValueFromJson("omz-env-secrets-backend", "CLUSTER_DB_USER"),
+//                getSecretValueFromJson("omz-env-secrets-backend", "CLUSTER_DB_PASSWORD")
+                getSecretValueFromJson("omz-env-secrets-backend", "LOCAL_FINANCIAL_HR_DB_URL"),
+                getSecretValueFromJson("omz-env-secrets-backend", "LOCAL_DB_USER"),
+                getSecretValueFromJson("omz-env-secrets-backend", "LOCAL_DB_PASSWORD")
         );
     }
 
