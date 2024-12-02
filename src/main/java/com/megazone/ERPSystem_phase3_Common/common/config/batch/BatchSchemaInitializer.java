@@ -4,7 +4,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Statement;
 
-public class SchemaInitializer {
+public class BatchSchemaInitializer {
 
     private static final String SCHEMA_SQL = """        
         CREATE TABLE BATCH_JOB_INSTANCE  (
