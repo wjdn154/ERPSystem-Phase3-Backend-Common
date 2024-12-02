@@ -1,19 +1,24 @@
 package com.megazone.ERPSystem_phase3_Common.Integrated.service.dashboard;
-
+import com.megazone.ERPSystem_phase3_Common.Integrated.model.dashboard.EnvironmentalCertificationAssessment;
+import com.megazone.ERPSystem_phase3_Common.Integrated.model.dashboard.RecentActivity;
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.dashboard.dto.DashboardDataDTO;
+import com.megazone.ERPSystem_phase3_Common.Integrated.model.dashboard.dto.EnvironmentalCertificationSaveDTO;
+import com.megazone.ERPSystem_phase3_Common.Integrated.model.dashboard.dto.IncomeStatementLedgerDashBoardDTO;
+import com.megazone.ERPSystem_phase3_Common.Integrated.model.dashboard.dto.IncomeStatementLedgerShowDTO;
+import com.megazone.ERPSystem_phase3_Common.Integrated.model.dashboard.dto.RecentActivityEntryDTO;
 import com.megazone.ERPSystem_phase3_Common.Integrated.repository.dashboard.EnvironmentalCertificationAssessmentRepository;
 import com.megazone.ERPSystem_phase3_Common.Integrated.repository.dashboard.RecentActivityRepository;
-import com.megazone.ERPSystem_phase3_Common.financial.model.financial_statements.dto.IncomeStatementLedgerDashBoardDTO;
-import com.megazone.ERPSystem_phase3_Common.financial.service.financial_statements_ledger.IncomeStatementService;
-import com.megazone.ERPSystem_phase3_Common.financial.service.ledger.SalesAndPurchaseLedgerService;
-import com.megazone.ERPSystem_phase3_Common.hr.repository.basic_information_management.Employee.EmployeeRepository;
+import com.megazone.ERPSystem_phase3_Common.company.service.basic_information_management.company.FinancialService;
+import com.megazone.ERPSystem_phase3_Common.logistics.LogisticService;
+import com.megazone.ERPSystem_phase3_Common.production.ProductionService;
+import com.megazone.ERPSystem_phase3_Common.production.dto.CalculatorDTO;
+import com.megazone.ERPSystem_phase3_Common.production.dto.CalculatorResponseDTO;
+import com.megazone.ERPSystem_phase3_Common.user.repository.basic_information_management.Employee.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.megazone.ERPSystem_phase3_Common.financial.model.financial_statements.dto.IncomeStatementLedgerShowDTO;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -29,17 +34,16 @@ public class IntegratedServiceImpl implements IntegratedService {
 
     private final RecentActivityRepository recentActivityRepository;
     private final EnvironmentalCertificationAssessmentRepository environmentalCertificationAssessmentRepository;
-    private final SalesAndPurchaseLedgerService salesAndPurchaseLedgerService;
-    private final IncomeStatementService incomeStatementService;
-    private final EmployeeRepository employeeRepory;
+    private final FinancialService financialService;
+    private final ProductionService productionService;
+    private final EmployeeRepository employeeRepository;
+    private final LogisticService logisticService;
 
     @Override
     public DashboardDataDTO dashboard() {
-
-        
-        List<DashboardDataDTO.ActivityDTO> activities = getActivityDTOS(); // 최근 활동        
-        DashboardDataDTO.EnvironmentalScoreDTO environmentalScore = getEnvironmentalScoreDTO(); // 환경 점수        
-        IncomeStatementLedgerDashBoardDTO incomeStatementLedgerDashBoardDTO = incomeStatementService.DashBoardShow(); // 매출 및 비용 추이 데이터 집계
+        List<DashboardDataDTO.ActivityDTO> activities = getActivityDTOS(); // 최근 활동
+        DashboardDataDTO.EnvironmentalScoreDTO environmentalScore = getEnvironmentalScoreDTO(); // 환경 점수
+        IncomeStatementLedgerDashBoardDTO incomeStatementLedgerDashBoardDTO = financialService.dashBoardShow(); // 매출 및 비용 추이 데이터 집계
         List<DashboardDataDTO.SalesDataDTO> salesDataList = getSalesDataDTOS(incomeStatementLedgerDashBoardDTO); // 매출 및 비용 추이 데이터 가공
         DashboardDataDTO.DashboardWidgetDTO widgets = getDashboardWidgetDTO(incomeStatementLedgerDashBoardDTO); // 총매출, 총직원수, 재고현황, 생산량
 
@@ -53,17 +57,17 @@ public class IntegratedServiceImpl implements IntegratedService {
 
     private DashboardDataDTO.DashboardWidgetDTO getDashboardWidgetDTO(IncomeStatementLedgerDashBoardDTO incomeStatementLedgerDashBoardDTO) {
 
-//        BigDecimal totalWorkPerformance = workPerformanceRepository.findAll().stream().map(WorkPerformance::getAcceptableQuantity).reduce(BigDecimal.ZERO, BigDecimal::add); // 총 생산량
+        BigDecimal totalWorkPerformance = productionService.totalWorkPerformance(); // 총 생산량
 
         DashboardDataDTO.DashboardWidgetDTO widgets = DashboardDataDTO.DashboardWidgetDTO.builder()
                 .financeName("총 매출")
                 .financeValue(incomeStatementLedgerDashBoardDTO.getTotalRevenue())
                 .productionName("총 생산량")
-//                .productionValue(totalWorkPerformance)
+                .productionValue(totalWorkPerformance)
                 .hrName("총 직원수")
                 .logisticsName("총 재고 현황")
-//                .logisticsValue(inventoryService.allInventoryCount())
-                .hrValue(Long.valueOf((employeeRepory.findAll().size())))
+                .logisticsValue(logisticService.inventoryCount())
+                .hrValue(Long.valueOf((employeeRepository.findAll().size())))
                 .build();
         return widgets;
     }
@@ -94,7 +98,9 @@ public class IntegratedServiceImpl implements IntegratedService {
     }
 
     @Nullable
-    private DashboardDataDTO.EnvironmentalScoreDTO getEnvironmentalScoreDTO() {
+    @Transactional(readOnly = true)
+    @Override
+    public DashboardDataDTO.EnvironmentalScoreDTO getEnvironmentalScoreDTO() {
         DashboardDataDTO.EnvironmentalScoreDTO environmentalScore = environmentalCertificationAssessmentRepository.findByMonth(YearMonth.now())
                 .map(environmentalCertificationAssessment -> DashboardDataDTO.EnvironmentalScoreDTO.builder()
                         .totalScore(environmentalCertificationAssessment.getTotalScore())
@@ -106,7 +112,9 @@ public class IntegratedServiceImpl implements IntegratedService {
     }
 
     @NotNull
-    private List<DashboardDataDTO.ActivityDTO> getActivityDTOS() {
+    @Override
+    @Transactional(readOnly = true)
+    public List<DashboardDataDTO.ActivityDTO> getActivityDTOS() {
         List<DashboardDataDTO.ActivityDTO> activities = recentActivityRepository.findAllByOrderByActivityTimeDesc()
                 .stream()
                 .map(activity -> DashboardDataDTO.ActivityDTO.builder()
@@ -140,5 +148,78 @@ public class IntegratedServiceImpl implements IntegratedService {
         if (minutes > 0) return minutes + "분 전";
 
         return "방금 전";
+    }
+
+
+    @Override
+    public void recentActivitySave(RecentActivityEntryDTO requestData) {
+        recentActivityRepository.save(
+                RecentActivity.builder()
+                        .activityDescription(requestData.getActivityDescription())
+                        .activityType(requestData.getActivityType())
+                        .activityTime(LocalDateTime.now())
+                        .build());
+    }
+
+    @Override
+    public void environmentalCertification(EnvironmentalCertificationSaveDTO dto) {
+        Optional<EnvironmentalCertificationAssessment> ECA = environmentalCertificationAssessmentRepository.findByMonth(dto.getYearMonth());
+
+        if (ECA.isEmpty()) {
+            CalculatorResponseDTO scoreResponse = productionService.ScoreAllCalculator(
+                    new CalculatorDTO(
+                            dto.getActualEnergyConsumption(),
+                            dto.getAverageWasteGenerated(),
+                            dto.getActualEnergyConsumption(),
+                            dto.getAverageEnergyConsumption()));
+
+            Integer wasteScore = scoreResponse.getWasteScore();
+            Integer energyScore = scoreResponse.getEnergyScore();
+
+            Integer totalScore = (wasteScore + energyScore) / 2;
+
+            EnvironmentalCertificationAssessment newECA = EnvironmentalCertificationAssessment.builder()
+                    .month(dto.getYearMonth())
+                    .totalWasteGenerated(dto.getActualWasteGenerated())
+                    .totalEnergyConsumed(dto.getActualEnergyConsumption())
+                    .totalIndustryAverageWasteGenerated(dto.getAverageWasteGenerated())
+                    .totalIndustryAverageEnergyConsumed(dto.getAverageEnergyConsumption())
+                    .wasteScore(wasteScore)
+                    .energyScore(energyScore)
+                    .totalScore(totalScore)
+                    .createdDate(LocalDateTime.now())
+                    .modifiedDate(LocalDateTime.now())
+                    .build();
+            environmentalCertificationAssessmentRepository.save(newECA);
+        } else {
+            EnvironmentalCertificationAssessment existingECA = ECA.get();
+            BigDecimal totalWasteGenerated = existingECA.getTotalWasteGenerated().add(dto.getActualWasteGenerated());
+            BigDecimal totalEnergyConsumed = existingECA.getTotalEnergyConsumed().add(dto.getActualEnergyConsumption());
+            BigDecimal totalAverageWasteGenerated = existingECA.getTotalIndustryAverageWasteGenerated().add(dto.getAverageWasteGenerated());
+            BigDecimal totalAverageEnergyConsumption = existingECA.getTotalIndustryAverageEnergyConsumed().add(dto.getAverageEnergyConsumption());
+
+
+            CalculatorResponseDTO scoreResponse = productionService.ScoreAllCalculator(
+                    new CalculatorDTO(
+                            totalWasteGenerated,
+                            totalAverageWasteGenerated,
+                            totalEnergyConsumed,
+                            totalAverageEnergyConsumption));
+
+            Integer wasteScore = scoreResponse.getWasteScore();
+            Integer energyScore = scoreResponse.getEnergyScore();
+            Integer totalScore = (wasteScore + energyScore) / 2;
+
+            existingECA.setTotalWasteGenerated(totalWasteGenerated);
+            existingECA.setTotalEnergyConsumed(totalEnergyConsumed);
+            existingECA.setTotalIndustryAverageWasteGenerated(totalAverageWasteGenerated);
+            existingECA.setTotalIndustryAverageEnergyConsumed(totalAverageEnergyConsumption);
+            existingECA.setWasteScore(wasteScore);
+            existingECA.setEnergyScore(energyScore);
+            existingECA.setTotalScore(totalScore);
+            existingECA.setModifiedDate(LocalDateTime.now());
+
+            environmentalCertificationAssessmentRepository.save(existingECA);
+        }
     }
 }

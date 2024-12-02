@@ -14,10 +14,7 @@ public class LoggingAspect {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
     // API 요청 전후로 로깅
-    @Around("execution(* com.megazone.ERPSystem_phase3_Common.financial.controller..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.hr.controller..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.logistics.controller..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.production.controller..*(..))")
+    @Around("execution(* com.megazone.ERPSystem_phase3_Common.Integrated.controller..*(..))")
     public Object logApiRequest(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().getName();
         logger.info("메소드 시작: " + methodName);
@@ -33,10 +30,7 @@ public class LoggingAspect {
     }
 
     // 서비스 Layer 메소드 호출 전후로 로깅
-    @Around("execution(* com.megazone.ERPSystem_phase3_Common.financial.service..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.hr.service..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.logistics.service..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.production.service..*(..))")
+    @Around("execution(* com.megazone.ERPSystem_phase3_Common.Integrated.service.*(..))")
     public Object logServiceMethods(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().getName();
         logger.info("서비스 메소드 시작: " + methodName);
@@ -53,10 +47,7 @@ public class LoggingAspect {
     }
 
     // 리포지토리 Layer 메소드 호출 전후로 로깅
-    @Around("execution(* com.megazone.ERPSystem_phase3_Common.financial.repository..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.hr.repository..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.logistics.repository..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.production.repository..*(..))")
+    @Around("execution(* com.megazone.ERPSystem_phase3_Common.Integrated.repository.*(..))")
     public Object logRepositoryMethods(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().getName();
         logger.info("리포지토리 메소드 시작: " + methodName);

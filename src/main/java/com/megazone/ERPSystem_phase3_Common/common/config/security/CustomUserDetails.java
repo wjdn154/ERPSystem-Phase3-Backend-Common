@@ -1,6 +1,6 @@
 package com.megazone.ERPSystem_phase3_Common.common.config.security;
 
-import com.megazone.ERPSystem_phase3_Common.hr.model.basic_information_management.employee.Users;
+import com.megazone.ERPSystem_phase3_Common.user.model.basic_information_management.employee.Users;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
