@@ -62,6 +62,13 @@ dependencies {
 	implementation ("software.amazon.awssdk:core:2.20.57") 	// AWS SDK Core
 	implementation("software.amazon.awssdk:kms:2.20.57") // AWS KMS SDK
 
+	// Spring Batch 의존성
+	implementation("org.springframework.boot:spring-boot-starter-batch")
+
+	// Jackson (JSON 직렬화/역직렬화)
+	implementation ("com.fasterxml.jackson.core:jackson-databind")
+	implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
 	// AWS X-Ray SDK Core
 	implementation ("com.amazonaws:aws-xray-recorder-sdk-core:2.9.1")
 	// AWS SDK와 연동이 필요한 경우 (예: S3 등)
@@ -89,7 +96,7 @@ dependencies {
 
 	// MySQL JDBC 드라이버
 	runtimeOnly("mysql:mysql-connector-java:8.0.30") // MySQL 드라이버
-//	runtimeOnly ("mysql:mysql-connector-java")
+	runtimeOnly ("mysql:mysql-connector-java") // MySQL 커넥터 (DB 메타데이터 저장)
 }
 
 // 소스 세트 설정: 생성된 QClass 파일을 메인 소스 디렉토리에 포함
