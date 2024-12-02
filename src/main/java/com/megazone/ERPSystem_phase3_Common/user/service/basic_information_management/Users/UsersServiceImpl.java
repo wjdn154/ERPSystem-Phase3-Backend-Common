@@ -19,7 +19,6 @@ import com.megazone.ERPSystem_phase3_Common.user.model.basic_information_managem
 import com.megazone.ERPSystem_phase3_Common.user.model.basic_information_management.employee.dto.UsersShowDTO;
 import com.megazone.ERPSystem_phase3_Common.user.repository.basic_information_management.Employee.EmployeeRepository;
 import com.megazone.ERPSystem_phase3_Common.user.repository.basic_information_management.Users.UsersRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -31,6 +30,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLException;
@@ -144,6 +144,7 @@ public class UsersServiceImpl implements UsersService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<Object> getPermissionByUsername(String username) {
 
         Users users = usersRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
@@ -185,6 +186,8 @@ public class UsersServiceImpl implements UsersService{
         return ResponseEntity.ok(modelMapper.map(savedUser.getPermission(), PermissionDTO.class));
     }
 
+    @Override
+    @Transactional(readOnly = true)
     public List<UsersShowDTO> findAllUsers() {
         // 모든 Users 엔티티를 조회하고, 각각을 UsersShowDTO로 변환
         return usersRepository.findAll()
@@ -209,6 +212,7 @@ public class UsersServiceImpl implements UsersService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UsersShowDTO findUserById(Long id) {
         Users user = usersRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));

@@ -96,6 +96,8 @@ dependencies {
 
 	// MySQL JDBC 드라이버
 	runtimeOnly("mysql:mysql-connector-java:8.0.30") // MySQL 드라이버
+	implementation("org.springframework.kafka:spring-kafka") // Kafka
+//	runtimeOnly ("mysql:mysql-connector-java")
 	runtimeOnly ("mysql:mysql-connector-java") // MySQL 커넥터 (DB 메타데이터 저장)
 }
 
