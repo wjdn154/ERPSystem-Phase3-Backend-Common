@@ -33,13 +33,17 @@ public class S3BatchScheduler {
         }
     }
 
-    @Scheduled(cron = "0 30 * * * ?") // 매 시간 30분마다 읽기
+    @Scheduled(cron = "*/5 * * * * ?") // 5초마다 실행
+//    @Scheduled(cron = "0 30 * * * ?") // 매 시간 30분마다 읽기
     public void runReadDashboardDataJob() {
         try {
             JobParameters jobParameters = new JobParametersBuilder()
                     .addLong("timestamp", System.currentTimeMillis())
                     .toJobParameters();
+
+            System.out.println(">>> Read Job 실행 시작: " + System.currentTimeMillis());
             jobLauncher.run(readDashboardDataJob, jobParameters);
+            System.out.println(">>> Read Job 실행 완료");
         } catch (Exception e) {
             e.printStackTrace();
         }
