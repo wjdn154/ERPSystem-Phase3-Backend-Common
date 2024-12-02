@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/integrated")
+@RequestMapping("/api/common")
 @RequiredArgsConstructor
 public class IntegratedController {
 

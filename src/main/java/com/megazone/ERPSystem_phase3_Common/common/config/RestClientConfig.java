@@ -14,28 +14,28 @@ public class RestClientConfig {
     @Bean
     public RestClient productionServiceClient() {
         return RestClient.builder()
-                .baseUrl("http://localhost:8081/api/production/")
+                .baseUrl(secretManagerConfig.getProductionServiceUrl())
                 .build();
     }
 
     @Bean
     public RestClient logisticsServiceClient() {
         return RestClient.builder()
-                .baseUrl("http://localhost:8081/api/logistics/")
+                .baseUrl(secretManagerConfig.getLogisticsServiceUrl())
                 .build();
     }
 
     @Bean
     public RestClient HumanResourceServiceClient() {
         return RestClient.builder()
-                .baseUrl("http://localhost:8080/api/hr/")
+                .baseUrl(secretManagerConfig.getHumanResourceServiceUrl())
                 .build();
     }
 
     @Bean
     public RestClient financialServiceClient() {
         return RestClient.builder()
-                .baseUrl("http://localhost:8080/api/financial/")
+                .baseUrl(secretManagerConfig.getFinancialServiceUrl())
                 .build();
     }
 }
