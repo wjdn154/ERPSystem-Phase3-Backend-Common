@@ -98,7 +98,9 @@ public class IntegratedServiceImpl implements IntegratedService {
     }
 
     @Nullable
-    private DashboardDataDTO.EnvironmentalScoreDTO getEnvironmentalScoreDTO() {
+    @Transactional(readOnly = true)
+    @Override
+    public DashboardDataDTO.EnvironmentalScoreDTO getEnvironmentalScoreDTO() {
         DashboardDataDTO.EnvironmentalScoreDTO environmentalScore = environmentalCertificationAssessmentRepository.findByMonth(YearMonth.now())
                 .map(environmentalCertificationAssessment -> DashboardDataDTO.EnvironmentalScoreDTO.builder()
                         .totalScore(environmentalCertificationAssessment.getTotalScore())
@@ -110,7 +112,9 @@ public class IntegratedServiceImpl implements IntegratedService {
     }
 
     @NotNull
-    private List<DashboardDataDTO.ActivityDTO> getActivityDTOS() {
+    @Override
+    @Transactional(readOnly = true)
+    public List<DashboardDataDTO.ActivityDTO> getActivityDTOS() {
         List<DashboardDataDTO.ActivityDTO> activities = recentActivityRepository.findAllByOrderByActivityTimeDesc()
                 .stream()
                 .map(activity -> DashboardDataDTO.ActivityDTO.builder()

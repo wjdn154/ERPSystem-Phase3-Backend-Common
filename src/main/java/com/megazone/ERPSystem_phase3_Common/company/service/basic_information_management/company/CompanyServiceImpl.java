@@ -13,9 +13,9 @@ import com.megazone.ERPSystem_phase3_Common.company.model.basic_information_mana
 import com.megazone.ERPSystem_phase3_Common.company.model.common.Contact;
 import com.megazone.ERPSystem_phase3_Common.company.repository.basic_information_management.company.*;
 import com.megazone.ERPSystem_phase3_Common.company.repository.common.ContactRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,6 +39,7 @@ public class CompanyServiceImpl implements CompanyService {
     private final NotificationService notificationService;
 
     @Override
+    @Transactional(readOnly = true)
     public List<CompanyDTO> findAllCompany() {
         List<Company> companies = companyRepository.findAll();
         return companies.stream()
@@ -47,6 +48,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CompanyDTO> searchCompany(String searchText) {
         List<Company> companies;
 
@@ -322,7 +324,9 @@ public class CompanyServiceImpl implements CompanyService {
      * @param code 주업종 코드
      * @return 저장된 주업종 코드 엔티티
      */
-    private MainBusiness findMainBusiness(String code) {
+    @Override
+    @Transactional(readOnly = true)
+    public MainBusiness findMainBusiness(String code) {
         return mainBusinessRepository.findByCode(code)
                 .orElseThrow(() -> new IllegalArgumentException("주업종 코드가 올바르지 않습니다."));
     }
@@ -334,7 +338,9 @@ public class CompanyServiceImpl implements CompanyService {
      * @return 조회된 세무서 엔티티
      * @throws IllegalArgumentException 세무서 정보가 올바르지 않을 때 예외 발생
      */
-    private TaxOffice findTaxOffice(String code) {
+    @Override
+    @Transactional(readOnly = true)
+    public TaxOffice findTaxOffice(String code) {
         return taxOfficeRepository.findByCode(code)
                 .orElseThrow(() -> new IllegalArgumentException("세무서 정보가 올바르지 않습니다."));
     }

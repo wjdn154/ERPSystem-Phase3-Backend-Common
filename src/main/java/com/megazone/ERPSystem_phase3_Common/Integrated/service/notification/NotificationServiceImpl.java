@@ -144,7 +144,7 @@ public class NotificationServiceImpl implements NotificationService {
 //    }
     // 트랜잭션 내에서 사용자 정보 조회
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public UserSubscriptionDTO getUserSubscriptionInfo(Long employeeId, boolean isAdmin) {
         Users users = usersRepository.findByEmployeeId(employeeId).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         String departmentName = users.getEmployee().getDepartment().getDepartmentName();
