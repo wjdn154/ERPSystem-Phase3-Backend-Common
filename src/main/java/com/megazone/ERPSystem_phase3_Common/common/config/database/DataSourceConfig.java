@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.batch.BatchDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -62,4 +63,15 @@ public class DataSourceConfig {
 
         return routingDataSource;
     }
+
+//    @Bean
+//    @BatchDataSource
+//    public DataSource batchDataSource() {
+//        HikariDataSource batchDataSource = new HikariDataSource();
+//        batchDataSource.setJdbcUrl("jdbc:mysql://localhost:3397/spring_batch?useSSL=false&serverTimezone=Asia/Seoul");
+//        batchDataSource.setUsername("root");
+//        batchDataSource.setPassword("1234");
+//        return batchDataSource;
+//    }
+
 }
