@@ -83,7 +83,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             // 토큰이 유효한지 확인하고, 유효하면 인증 처리
             if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());  // 인증 객체 생성
+                        userDetails, jwt, userDetails.getAuthorities());  // 인증 객체 생성
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);  // 인증 객체를 SecurityContext에 설정
             }

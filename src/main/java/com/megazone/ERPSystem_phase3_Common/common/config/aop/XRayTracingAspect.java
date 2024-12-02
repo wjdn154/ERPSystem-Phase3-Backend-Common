@@ -18,10 +18,7 @@ public class XRayTracingAspect {
     private static final ThreadLocal<Boolean> mainSegmentCreated = ThreadLocal.withInitial(() -> false);
 
     // 서비스 Layer 메소드 호출 전후로 메인 세그먼트 생성
-    @Around("execution(* com.megazone.ERPSystem_phase3_Common.financial.service..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.hr.service..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.logistics.service..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.production.service..*(..))")
+    @Around("execution(* com.megazone.ERPSystem_phase3_Common.Integrated.service..*(..))")
     public Object traceServiceMethods(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().getName();
 
@@ -48,10 +45,7 @@ public class XRayTracingAspect {
     }
 
     // 리포지토리 Layer 메소드 호출 전후로 서브세그먼트 생성
-    @Around("execution(* com.megazone.ERPSystem_phase3_Common.financial.repository..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.hr.repository..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.logistics.repository..*(..)) || " +
-            "execution(* com.megazone.ERPSystem_phase3_Common.production.repository..*(..))")
+    @Around("execution(* com.megazone.ERPSystem_phase3_Common.Integrated.repository..*(..))")
     public Object traceRepositoryMethods(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().getName();
 
