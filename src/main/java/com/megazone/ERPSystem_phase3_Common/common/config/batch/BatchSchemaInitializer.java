@@ -1,12 +1,14 @@
 package com.megazone.ERPSystem_phase3_Common.common.config.batch;
 
+import jakarta.transaction.Transactional;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Statement;
 
 public class BatchSchemaInitializer {
 
-    private static final String SCHEMA_SQL = """        
+    private static final String BATCH_SCHEMA_SQL = """        
         CREATE TABLE BATCH_JOB_INSTANCE  (
         	JOB_INSTANCE_ID BIGINT  NOT NULL PRIMARY KEY ,
         	VERSION BIGINT ,
@@ -105,12 +107,13 @@ public class BatchSchemaInitializer {
         INSERT INTO BATCH_JOB_SEQ (ID, UNIQUE_KEY) select * from (select 0 as ID, '0' as UNIQUE_KEY) as tmp where not exists(select * from BATCH_JOB_SEQ);
         """;
 
-    public static void initializeSchema(DataSource dataSource) {
+    @Transactional
+    public void initializeBatchSchema(DataSource dataSource) {
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement()) {
-            statement.execute(SCHEMA_SQL);
+            statement.execute(BATCH_SCHEMA_SQL);
         } catch (Exception e) {
-            throw new RuntimeException("스키마 초기화 중 오류 발생", e);
+            throw new RuntimeException("Batch 스키마 초기화 중 오류 발생", e);
         }
     }
 }

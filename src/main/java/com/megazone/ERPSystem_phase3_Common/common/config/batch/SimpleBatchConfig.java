@@ -7,17 +7,18 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.batch.core.repository.support.SimpleJobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
-
 
 import javax.sql.DataSource;
 
@@ -32,6 +33,17 @@ public class SimpleBatchConfig {
 
     public SimpleBatchConfig(DataSource dynamicDataSource) {
         this.dynamicDataSource = dynamicDataSource;
+    }
+
+    // JobLauncher 설정
+    @Bean
+    public JobLauncher jobLauncher(JobRepository jobRepository) throws Exception {
+        // TaskExecutorJobLauncher를 사용하여 비동기 실행 지원
+        TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
+        jobLauncher.setJobRepository(jobRepository);  // JobRepository 설정
+        jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor()); // 비동기 실행
+        jobLauncher.afterPropertiesSet();  // 초기화
+        return jobLauncher;
     }
 
     @Bean
@@ -56,16 +68,6 @@ public class SimpleBatchConfig {
                 .build();
     }
 
-    // JobLauncher 설정
-    @Bean
-    public JobLauncher jobLauncher(JobRepository jobRepository) throws Exception {
-        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
-        jobLauncher.setJobRepository(jobRepository);
-        jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor()); // 비동기 실행 지원
-        jobLauncher.afterPropertiesSet();
-        return jobLauncher;
-    }
-
     @Bean
     public Step simpleStep(JobRepository jobRepository) {
         return new StepBuilder("simpleStep", jobRepository)
@@ -76,4 +78,6 @@ public class SimpleBatchConfig {
                 }, transactionManager())
                 .build();
     }
+
+
 }
