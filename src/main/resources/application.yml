@@ -53,6 +53,7 @@ spring:
         - classpath:initial-database/hr/employee.sql
         - classpath:initial-database/hr/users.sql
         - classpath:initial-database/environmental_certification_assessment.sql
+        - classpath:initial-database/spring_batch.sql
 
   kafka:
 #    bootstrap-servers: kafka-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
@@ -72,8 +73,8 @@ spring:
 
 logging:
   level:
-    root: DEBUG
-#    root: INFO
+#    root: DEBUG
+    root: INFO
 #    com.megazone: DEBUG
 #    org.flywaydb: DEBUG
 #    org.hibernate.boot.model.naming: TRACE

@@ -12,6 +12,8 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import javax.sql.DataSource;
+
 @Configuration
 @EnableScheduling
 @RequiredArgsConstructor
@@ -19,10 +21,15 @@ public class SimpleBatchScheduler {
 
     private final JobLauncher jobLauncher;
     private final Job simpleJob;
+//    private final BatchSchemaInitializer batchSchemaInitializer;
+    private final DataSource dynamicDataSource;
 
-    @Scheduled(cron = "*/5 * * * * ?") // 10초마다 실행
+    @Scheduled(cron = "*/5 * * * * ?") // 5초마다 실행
     public void runSimpleJob() {
         try {
+            // 현재 활성화된 테넌트의 스키마에 Batch 테이블 생성
+//            batchSchemaInitializer.initializeBatchSchema(dynamicDataSource);
+
             JobParameters jobParameters = new JobParametersBuilder()
                     .addLong("timestamp", System.currentTimeMillis())
                     .toJobParameters();
