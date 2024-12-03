@@ -20,6 +20,8 @@ public class S3Config {
     private final SecretManagerConfig secretManagerConfig;
     private String awsRegion;
     private String bucketName;
+    private String dashboardBucketName;
+
 
     @Autowired
     public S3Config(SecretManagerConfig secretManagerConfig) {
@@ -32,6 +34,7 @@ public class S3Config {
         String secretKey = secretManagerConfig.getSecretValueFromJson(SECRET_NAME, "AWS_SECRET_ACCESS_KEY");
         this.awsRegion = secretManagerConfig.getSecretValueFromJson(SECRET_NAME, "AWS_REGION");
         this.bucketName = secretManagerConfig.getSecretValueFromJson(SECRET_NAME, "AWS_S3_BUCKET_NAME");
+        this.dashboardBucketName = secretManagerConfig.getSecretValueFromJson(SECRET_NAME, "AWS_S3_BUCKET_DASHBOARD");
 
         return S3Client.builder()
                 .region(Region.of(awsRegion))

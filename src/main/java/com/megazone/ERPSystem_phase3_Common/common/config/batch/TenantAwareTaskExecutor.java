@@ -1,5 +1,7 @@
 package com.megazone.ERPSystem_phase3_Common.common.config.batch;
 
+import com.megazone.ERPSystem_phase3_Common.common.config.multi_tenant.SchemaBasedMultiTenantConnectionProvider;
+import com.megazone.ERPSystem_phase3_Common.common.config.multi_tenant.SchemaBasedTenantIdentifierResolver;
 import com.megazone.ERPSystem_phase3_Common.common.config.multi_tenant.TenantContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -13,7 +15,7 @@ public class TenantAwareTaskExecutor extends ThreadPoolTaskExecutor {
         super.execute(() -> {
             try {
                 TenantContext.setCurrentTenant(tenantId); // 자식 스레드에서 테넌트 설정
-                System.out.println("TenantAwareTaskExecutor.execute - tenantId: " + tenantId);
+                System.out.println("TenantAwareTaskExecutor.execute - tenantId: " + TenantContext.getCurrentTenant());
                 task.run();
             } finally {
                 TenantContext.clear();
