@@ -2,6 +2,7 @@ package com.megazone.ERPSystem_phase3_Common.common.config.batch;
 
 import com.megazone.ERPSystem_phase3_Common.common.config.database.DataSourceConfig;
 import com.megazone.ERPSystem_phase3_Common.common.config.database.DataSourceContext;
+import com.megazone.ERPSystem_phase3_Common.common.config.multi_tenant.TenantContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
@@ -30,16 +31,22 @@ public class SimpleBatchScheduler {
     private final Job simpleJob;
     private final DataSource dynamicDataSource;
 
+    // 구현 단계
+    // 1. tenant_1 만으로 일단 처리 <-
+    // 2. s3로 DTO 바로 전달해서 저장
+    // 3. s3에서 클라이언트에 json 형태로 전달해 보여주기
+    // 4. 제일 마지막에 테넌트별 반복 ( 현재는 단일로만 진행 )
+
     @Scheduled(cron = "*/5 * * * * ?") // 5초마다 실행
     public void runSimpleJob() {
         try {
             List<String> tenants = getAllTenants();  // DB에서 테넌트 목록을 조회
             for (String tenant : tenants) {
                 try {
-                    DataSourceContext.setCurrentDataSource(tenant); // 테넌트 데이터소스 설정
 
-//                    printActiveTenant();
-//                    printBatchJobExecutionData();
+                    TenantContext.setCurrentTenant(tenant);
+                    System.out.println(">>> 현재 Tenant: " + TenantContext.getCurrentTenant());
+
                     // 배치 작업 실행
                     JobParameters jobParameters = new JobParametersBuilder()
                             .addLong("timestamp", System.currentTimeMillis())
@@ -47,23 +54,27 @@ public class SimpleBatchScheduler {
                             .toJobParameters();
 
                     System.out.println(">>> " + tenant + " 배치 작업 실행 시작");
+                    System.out.println(">>>>>>>>>>> " + " simpleJob: " + simpleJob);
+                    System.out.println(">>>>>>>>>>> " + " jobParameters: " + jobParameters);
                     jobLauncher.run(simpleJob, jobParameters);
+
                     System.out.println(">>> " + tenant + " 배치 작업 실행 완료");
+
+                    System.out.println(">>> 현재 Tenant: " + TenantContext.getCurrentTenant());
 
                 } catch (Exception e) {
                     System.err.println(">>> " + tenant + " 배치 작업 실행 중 오류 발생");
                     e.printStackTrace();
-                } finally {
-                    DataSourceContext.clear(); // 각 테넌트 작업 후 데이터 소스 컨텍스트 초기화
                 }
             }
 
-            System.out.println(">>> 모든 배치 작업 완료 후, PUBLIC 테이블로 스위칭");
-            DataSourceContext.setCurrentDataSource("PUBLIC"); // 모든 배치가 끝난 후, 마지막에는 PUBLIC 테이블로 스위칭
-
-
         } catch (Exception e) {
+            System.err.println(">>> runSimpleJob 작업 실행 중 오류 발생");
             e.printStackTrace();
+
+        } finally {
+            System.out.println(">>> 모든 배치 작업 완료 후, PUBLIC 테이블로 스위칭");
+            TenantContext.setCurrentTenant("PUBLIC");
         }
     }
 
@@ -110,29 +121,4 @@ public class SimpleBatchScheduler {
         return false;
     }
 
-    //    // 현재 활성화된 테넌트 데이터소스 확인
-//    private void printActiveTenant() {
-//        try (Connection connection = dynamicDataSource.getConnection()) {
-//            String schemaName = connection.getCatalog(); // 현재 데이터베이스 스키마 이름을 가져옴
-//            System.out.println(">>> 현재 활성화된 테넌트 스키마: " + schemaName);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    // 배치 테이블의 데이터 확인 (tenant_1 / tenant_2)
-//    private void printBatchJobExecutionData() {
-//        try (Connection connection = dynamicDataSource.getConnection()) {
-//            String sql = "SELECT COUNT(*) FROM BATCH_JOB_EXECUTION";             // batch_job_execution 테이블에서 데이터가 있는지 확인
-//            try (PreparedStatement statement = connection.prepareStatement(sql);
-//                 ResultSet resultSet = statement.executeQuery()) {
-//                if (resultSet.next()) {
-//                    int count = resultSet.getInt(1); // 데이터의 개수를 가져옴
-//                    System.out.println(">>> 현재 BATCH_JOB_EXECUTION 테이블의 데이터 개수: " + count);
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 }

@@ -64,14 +64,4 @@ public class DataSourceConfig {
         return routingDataSource;
     }
 
-//    @Bean
-//    @BatchDataSource
-//    public DataSource batchDataSource() {
-//        HikariDataSource batchDataSource = new HikariDataSource();
-//        batchDataSource.setJdbcUrl("jdbc:mysql://localhost:3397/spring_batch?useSSL=false&serverTimezone=Asia/Seoul");
-//        batchDataSource.setUsername("root");
-//        batchDataSource.setPassword("1234");
-//        return batchDataSource;
-//    }
-
 }
