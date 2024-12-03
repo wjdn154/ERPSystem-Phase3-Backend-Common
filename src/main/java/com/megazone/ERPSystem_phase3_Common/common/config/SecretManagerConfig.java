@@ -41,39 +41,43 @@ public class SecretManagerConfig {
     public DatabaseCredentials getWriterSecret() {
         return new DatabaseCredentials(
 //                getCachedSecret("omz-env-secrets-backend", "RDS_COMMON_WRITER_DB_URL"),
+//                getCachedSecret("omz-env-secrets-backend", "test_writer"),
 //                getCachedSecret("omz-env-secrets-backend", "RDS_DB_USER"),
 //                getCachedSecret("omz-env-secrets-backend", "RDS_DB_PASSWORD")
-                "jdbc:mysql://localhost:3306/PUBLIC?useSSL=false&serverTimezone=Asia/Seoul", "root", "1234"
+                "jdbc:mysql://mysql-service-a:3306/PUBLIC?useSSL=false&serverTimezone=Asia/Seoul", "root", "1234"
+//                "jdbc:mysql://localhost:3306/PUBLIC?useSSL=false&serverTimezone=Asia/Seoul", "root", "1234"
         );
     }
 
     public DatabaseCredentials getReaderSecret() {
         return new DatabaseCredentials(
 //                getCachedSecret("omz-env-secrets-backend", "RDS_COMMON_READER_DB_URL"),
+//                getCachedSecret("omz-env-secrets-backend", "test_read"),
 //                getCachedSecret("omz-env-secrets-backend", "RDS_DB_USER"),
 //                getCachedSecret("omz-env-secrets-backend", "RDS_DB_PASSWORD")
-                "jdbc:mysql://localhost:3306/PUBLIC?useSSL=false&serverTimezone=Asia/Seoul", "root", "1234"
+                "jdbc:mysql://mysql-service-a:3306/PUBLIC?useSSL=false&serverTimezone=Asia/Seoul", "root", "1234"
+//                "jdbc:mysql://localhost:3306/PUBLIC?useSSL=false&serverTimezone=Asia/Seoul", "root", "1234"
         );
     }
 
     public String getLogisticsServiceUrl() {
-//        return getCachedSecret("omz-env-secrets-backend", "CLUSTER_LOGISTICS_SERVICE_URL");
-        return "http://localhost:8081/api/logistics/";
+        return getCachedSecret("omz-env-secrets-backend", "CLUSTER_LOGISTICS_SERVICE_URL");
+//        return "http://localhost:8081/api/logistics/";
     }
 
     public String getProductionServiceUrl() {
-//        return getCachedSecret("omz-env-secrets-backend", "CLUSTER_PRODUCTION_SERVICE_URL");
-        return "http://localhost:8081/api/production/";
+        return getCachedSecret("omz-env-secrets-backend", "CLUSTER_PRODUCTION_SERVICE_URL");
+//        return "http://localhost:8081/api/production/";
     }
 
     public String getFinancialServiceUrl() {
-//        return getCachedSecret("omz-env-secrets-backend", "CLUSTER_FINANCIAL_SERVICE_URL");
-        return "http://localhost:8080/api/financial/";
+        return getCachedSecret("omz-env-secrets-backend", "CLUSTER_FINANCIAL_SERVICE_URL");
+//        return "http://localhost:8080/api/financial/";
     }
 
     public String getHumanResourceServiceUrl() {
-//        return getCachedSecret("omz-env-secrets-backend", "CLUSTER_HR_SERVICE_URL");
-        return "http://localhost:8080/api/hr/";
+        return getCachedSecret("omz-env-secrets-backend", "CLUSTER_HR_SERVICE_URL");
+//        return "http://localhost:8080/api/hr/";
     }
 
     public String getSecretValueFromJson(String secretName, String key) {
