@@ -1,5 +1,6 @@
 package com.megazone.ERPSystem_phase3_Common.common.config.batch;
 
+import com.megazone.ERPSystem_phase3_Common.common.config.multi_tenant.TenantContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -35,17 +37,26 @@ public class SimpleBatchConfig {
         this.dynamicDataSource = dynamicDataSource;
     }
 
+
+    @Bean
+    public TaskExecutor taskExecutor() {
+        return new TenantAwareTaskExecutor();
+
+    }
+
     // JobLauncher 설정
     @Bean
     public JobLauncher jobLauncher(JobRepository jobRepository) throws Exception {
         // TaskExecutorJobLauncher를 사용하여 비동기 실행 지원
         TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
         jobLauncher.setJobRepository(jobRepository);  // JobRepository 설정
-        jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor()); // 비동기 실행
+        jobLauncher.setTaskExecutor(taskExecutor()); // 메서드 호출을 통한 TenantAwareTaskExecutor Bean 주입
         jobLauncher.afterPropertiesSet();  // 초기화
         return jobLauncher;
     }
 
+
+    // TODO
     @Bean
     public JobRepository jobRepository() throws Exception {
         JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
@@ -74,6 +85,7 @@ public class SimpleBatchConfig {
                 .tasklet((contribution, chunkContext) -> {
                     log.info("스프링 배치가 정상적으로 실행되었습니다!");
                     System.out.println("배치 작업 수행 중...");
+                    System.out.println("TenantContext.getCurrentTenant(): " + TenantContext.getCurrentTenant());
                     return RepeatStatus.FINISHED; // Null 대신 RepeatStatus.FINISHED로 반환
                 }, transactionManager())
                 .build();
