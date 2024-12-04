@@ -31,6 +31,7 @@ public class SaveDashboardToS3 implements Tasklet {
 
         // 배치 작업 중에 현재 테넌트 설정
         String tenantId = TenantContext.getCurrentTenant(); // 현재 테넌트 정보를 가져옴
+        log.debug("tenantId == " + tenantId);
         Authentication authentication = new UsernamePasswordAuthenticationToken(tenantId, null, List.of());  // 인증 정보 설정
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
@@ -38,17 +39,19 @@ public class SaveDashboardToS3 implements Tasklet {
 
         try {
             DashboardDataDTO dashboardDataDTO = integratedService.dashboard();
-            log.info("생성된 대시보드: {}", dashboardDataDTO);
+            log.info("대시보드 데이터 생성 시작");
+            log.debug("데이터 상태: {}", dashboardDataDTO);
 
             s3DashboardService.uploadDashboardData("dashboard-data.json", dashboardDataDTO);
             log.info("대시보드 데이터를 s3에 저장했습니다.");
 
         } catch (Exception e) {
-            log.error("배치 작업 실행 중 오류 발생: ", e);
+            log.error("SaveDashboardToS3 배치 작업 실행 중 오류 발생: ", e);
             throw e;
         } finally {
             // 배치 작업 후 인증 정보 초기화
             SecurityContextHolder.clearContext();
+            log.info("SaveDashboardToS3 JOB FINALE");
         }
 
         return RepeatStatus.FINISHED;

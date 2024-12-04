@@ -85,6 +85,7 @@ UNIQUE_KEY CHAR(1) NOT NULL,
 constraint UNIQUE_KEY_UN unique (UNIQUE_KEY)
 ) ENGINE=InnoDB;
 
+-- BATCH_JOB_EXECUTION 테이블의 PK를 관리하기 위한 시퀀스 테이블
 INSERT INTO BATCH_JOB_EXECUTION_SEQ (ID, UNIQUE_KEY) select * from (select 0 as ID, '0' as UNIQUE_KEY) as tmp where not exists(select * from BATCH_JOB_EXECUTION_SEQ);
 
 CREATE TABLE IF NOT EXISTS BATCH_JOB_SEQ (
@@ -93,4 +94,5 @@ UNIQUE_KEY CHAR(1) NOT NULL,
 constraint UNIQUE_KEY_UN unique (UNIQUE_KEY)
 ) ENGINE=InnoDB;
 
+-- BATCH_JOB_INSTANCE 테이블의 PK를 관리하기 위한 시퀀스 테이블
 INSERT INTO BATCH_JOB_SEQ (ID, UNIQUE_KEY) select * from (select 0 as ID, '0' as UNIQUE_KEY) as tmp where not exists(select * from BATCH_JOB_SEQ);
