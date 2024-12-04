@@ -18,7 +18,7 @@ public class EmployeeListener {
     private final ObjectMapper objectMapper;
     private final KafkaProducerHelper kafkaProducerHelper;
 
-    @KafkaListener(topics = "employee-update", groupId = "common-service-group")
+    @KafkaListener(topics = "employee-update", groupId = "common-service-group", autoStartup = "true")
     public void handleEmployeeUpdateResponse(Map<String, Object> response) {
         String requestId = (String) response.get("requestId");
 
@@ -39,7 +39,7 @@ public class EmployeeListener {
         }
     }
 
-    @KafkaListener(topics = "employee-save", groupId = "common-service-group")
+    @KafkaListener(topics = "employee-save", groupId = "common-service-group", autoStartup = "true")
     public void handleEmployeeSaveResponse(Map<String, Object> response) {
         //        String requestId = (String) response.get("requestId");
 
