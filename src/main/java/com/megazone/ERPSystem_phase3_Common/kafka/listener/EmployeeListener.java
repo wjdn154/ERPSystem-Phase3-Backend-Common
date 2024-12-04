@@ -1,6 +1,7 @@
 package com.megazone.ERPSystem_phase3_Common.kafka.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.megazone.ERPSystem_phase3_Common.common.config.KafkaProducerHelper;
 import com.megazone.ERPSystem_phase3_Common.common.config.multi_tenant.TenantContext;
 import com.megazone.ERPSystem_phase3_Common.user.model.basic_information_management.employee.dto.EmployeeShowToDTO;
 import com.megazone.ERPSystem_phase3_Common.user.service.basic_information_management.Users.EmployeeService;
@@ -15,10 +16,11 @@ import java.util.Map;
 public class EmployeeListener {
     private final EmployeeService employeeService;
     private final ObjectMapper objectMapper;
+    private final KafkaProducerHelper kafkaProducerHelper;
 
     @KafkaListener(topics = "employee-update", groupId = "common-service-group")
     public void handleEmployeeUpdateResponse(Map<String, Object> response) {
-//        String requestId = (String) response.get("requestId");
+        String requestId = (String) response.get("requestId");
 
         try {
             TenantContext.setCurrentTenant(response.get("tenant").toString());
@@ -26,12 +28,12 @@ public class EmployeeListener {
             if (response.containsKey("data")) {
                 EmployeeShowToDTO employeeShowToDTO = objectMapper.convertValue(response.get("data"), EmployeeShowToDTO.class);
                 employeeService.updateEmployee(employeeShowToDTO);
+                kafkaProducerHelper.sagaSendSuccessResponse(requestId,"common-service-group");
             } else if (response.containsKey("error")) {
-//                String error = (String) response.get("error");
-                // 에러로직
+                kafkaProducerHelper.sagaSendErrorResponse(requestId,"logistics-service-group",response.get("error").toString());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            kafkaProducerHelper.sagaSendErrorResponse(requestId,"logistics-service-group",e.getMessage());
         } finally {
             TenantContext.setCurrentTenant("PUBLIC");
         }
