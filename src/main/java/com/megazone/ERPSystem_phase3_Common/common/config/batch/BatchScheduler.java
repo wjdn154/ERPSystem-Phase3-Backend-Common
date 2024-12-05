@@ -29,7 +29,6 @@ public class BatchScheduler {
     private final JobLauncher jobLauncher;
     private final Job simpleJob;
     private final Job saveDashboardToS3Job;
-    private final Job readDashboardDataJob;
 
 //    @Scheduled(cron = "*/5 * * * * ?") // 5초마다 실행
 //    public void runSimpleJob() {
@@ -57,13 +56,14 @@ public class BatchScheduler {
 //        }
 //    }
 
-    //    @Scheduled(cron = "0 0 * * * ?") // 매 시간마다 저장
+//    @Scheduled(cron = "0 0 * * * ?") // 매 시간마다 저장
 //    @Scheduled(cron = "*/10 * * * * ?") // Test를 위해 10초마다 실행
     @Scheduled(fixedDelay = 10000)  // Test를 위해 10초 간격으로 실행
     public void runSaveDashboardToS3Job() {
         try {
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> runSaveDashboardToS3Job TRY");
-
+//            TenantContext.setCurrentTenant("tenant_1");
+            System.out.println(">>> 현재 Tenant: " + TenantContext.getCurrentTenant());
             String uniqueJobKey = "save_" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString();
 
             // 배치 작업 실행
@@ -82,44 +82,10 @@ public class BatchScheduler {
             System.err.println(">>> " + " runSaveDashboardToS3Job 배치 작업 실행 중 오류 발생");
             e.printStackTrace();
         } finally {
+            TenantContext.setCurrentTenant("PUBLIC");
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> runSaveDashboardToS3Job FINALE");
         }
     }
-
-////    @Scheduled(cron = "0 30 * * * ?") // 매 시간 30분마다 읽기
-//    @Scheduled(cron = "*/5 * * * * ?") // Test를 위해 5초마다 실행
-//    public void runReadDashboardDataJob() {
-//
-//        try {
-//            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 현재 Tenant: " + TenantContext.getCurrentTenant());
-//
-//            TenantContext.setCurrentTenant(tenant);
-//            System.out.println(">>> 현재 Tenant: " + TenantContext.getCurrentTenant());
-//
-//            String uniqueJobKey = "read_" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString();
-//
-//            JobParameters jobParameters = new JobParametersBuilder()
-////                    .addLong("timestamp", System.currentTimeMillis())
-//                    .addString("tenant", tenant)
-//                    .addString("uniqueJobKey", uniqueJobKey)
-//                    .toJobParameters();
-//
-//            System.out.println(">>> " + tenant + " 배치 작업 실행 시작");
-//            System.out.println(" readDashboardDataJob: " + readDashboardDataJob);
-//            System.out.println(" jobParameters: " + jobParameters);
-//            jobLauncher.run(readDashboardDataJob, jobParameters);
-//
-//            System.out.println(">>> 현재 Tenant: " + TenantContext.getCurrentTenant());
-//
-//        } catch (Exception e) {
-//            System.err.println(">>> " + tenant + " readDashboardDataJob 배치 작업 실행 중 오류 발생");
-//            e.printStackTrace();
-//        } finally {
-//            TenantContext.setCurrentTenant("PUBLIC");
-//            System.out.println(">>> 현재 Tenant: " + TenantContext.getCurrentTenant());
-//
-//        }
-//    }
 
     // Logging 용
     @Component

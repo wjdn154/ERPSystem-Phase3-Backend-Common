@@ -26,14 +26,12 @@ import javax.sql.DataSource;
 @Configuration
 @Slf4j
 public class BatchConfig {
-    private final LoadDashboardFromS3 loadDashboardFromS3;
     private final SaveDashboardToS3 saveDashboardToS3;
     private final DataSource dynamicDataSource;
 
-    public BatchConfig(DataSource dynamicDataSource, SaveDashboardToS3 saveDashboardToS3, LoadDashboardFromS3 loadDashboardFromS3) {
+    public BatchConfig(DataSource dynamicDataSource, SaveDashboardToS3 saveDashboardToS3) {
         this.dynamicDataSource = dynamicDataSource;
         this.saveDashboardToS3 = saveDashboardToS3;
-        this.loadDashboardFromS3 = loadDashboardFromS3;
     }
 
     @Bean
@@ -110,31 +108,7 @@ public class BatchConfig {
                 }, transactionManager())
                 .build();
     }
-
-    // Read Dashboard Data Job
-    @Bean
-    public Job readDashboardDataJob(JobRepository jobRepository) {
-        log.info("readDashboardDataJob 생성 중...");
-        return new JobBuilder("readDashboardDataJob", jobRepository)
-                .start(loadFromS3Step(jobRepository))
-                .build();
-    }
-
-    @Bean
-    public Step loadFromS3Step(JobRepository jobRepository) {
-        log.info("loadFromS3Step 생성 중...");
-        return new StepBuilder("loadFromS3Step", jobRepository)
-                .tasklet((contribution, chunkContext) -> {
-                    log.info("LoadFromS3 Step 실행 시작.");
-                    loadDashboardFromS3.execute(contribution, chunkContext);
-                    log.info("LoadFromS3 Step 실행 완료.");
-                    return RepeatStatus.FINISHED;
-                }, transactionManager())
-                .build();
-    }
 }
-
-
 
 //    @Bean
 //    public JdbcCursorItemReader<BatchStepExecution> failedStepReader() {

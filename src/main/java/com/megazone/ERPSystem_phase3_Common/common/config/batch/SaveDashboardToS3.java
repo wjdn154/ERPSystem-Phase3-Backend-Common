@@ -31,11 +31,15 @@ public class SaveDashboardToS3 implements Tasklet {
 
         // 배치 작업 중에 현재 테넌트 설정
         String tenantId = TenantContext.getCurrentTenant(); // 현재 테넌트 정보를 가져옴
-        log.debug("tenantId == " + tenantId);
         Authentication authentication = new UsernamePasswordAuthenticationToken(tenantId, null, List.of());  // 인증 정보 설정
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
+
+        if (tenantId == null) {
+            throw new IllegalStateException("테넌트 ID가 설정되지 않았습니다.");
+        }
+        log.info(">>> SaveDashboardToS3 실행 중 테넌트: {}", tenantId);
 
         try {
             DashboardDataDTO dashboardDataDTO = integratedService.dashboard();
