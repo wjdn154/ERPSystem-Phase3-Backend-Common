@@ -40,22 +40,25 @@ public class SecretManagerConfig {
 
     public DatabaseCredentials getWriterSecret() {
         return new DatabaseCredentials(
-//                getCachedSecret("omz-env-secrets-backend", "RDS_COMMON_WRITER_DB_URL"),
+                getCachedSecret("omz-env-secrets-backend", "RDS_COMMON_WRITER_DB_URL"),
 //                getCachedSecret("omz-env-secrets-backend", "test_writer"),
-//                getCachedSecret("omz-env-secrets-backend", "RDS_DB_USER"),
-//                getCachedSecret("omz-env-secrets-backend", "RDS_DB_PASSWORD")
-                "jdbc:mysql://mysql-service-a:3306/PUBLIC?useSSL=false&serverTimezone=Asia/Seoul", "root", "1234"
+                getCachedSecret("omz-env-secrets-backend", "RDS_DB_USER"),
+                getCachedSecret("omz-env-secrets-backend", "RDS_DB_PASSWORD")
+//                "jdbc:mysql://omz-erp-common-db-instance-1.cb8aguu88dgk.ap-northeast-2.rds.amazonaws.com/PUBLIC?useSSL=false&serverTimezone=Asia/Seoul", "admin", "tjdghk7025!A"
+//                "jdbc:mysql://mysql-service-a:3306/PUBLIC?useSSL=false&serverTimezone=Asia/Seoul", "root", "1234"
 //                "jdbc:mysql://localhost:3306/PUBLIC?useSSL=false&serverTimezone=Asia/Seoul", "root", "1234"
         );
     }
 
     public DatabaseCredentials getReaderSecret() {
         return new DatabaseCredentials(
-//                getCachedSecret("omz-env-secrets-backend", "RDS_COMMON_READER_DB_URL"),
+                getCachedSecret("omz-env-secrets-backend", "RDS_COMMON_READER_DB_URL"),
+//                getCachedSecret("omz-env-secrets-backend", "RDS_COMMON_WRITER_DB_URL"),
 //                getCachedSecret("omz-env-secrets-backend", "test_read"),
-//                getCachedSecret("omz-env-secrets-backend", "RDS_DB_USER"),
-//                getCachedSecret("omz-env-secrets-backend", "RDS_DB_PASSWORD")
-                "jdbc:mysql://mysql-service-a:3306/PUBLIC?useSSL=false&serverTimezone=Asia/Seoul", "root", "1234"
+                getCachedSecret("omz-env-secrets-backend", "RDS_DB_USER"),
+                getCachedSecret("omz-env-secrets-backend", "RDS_DB_PASSWORD")
+//                "jdbc:mysql://omz-erp-common-db-instance-reader.cb8aguu88dgk.ap-northeast-2.rds.amazonaws.com/PUBLIC?useSSL=false&serverTimezone=Asia/Seoul", "admin", "tjdghk7025!A"
+//                "jdbc:mysql://mysql-service-a:3306/PUBLIC?useSSL=false&serverTimezone=Asia/Seoul", "root", "1234"
 //                "jdbc:mysql://localhost:3306/PUBLIC?useSSL=false&serverTimezone=Asia/Seoul", "root", "1234"
         );
     }
