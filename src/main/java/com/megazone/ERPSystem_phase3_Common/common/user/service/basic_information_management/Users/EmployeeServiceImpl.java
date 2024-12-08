@@ -1,6 +1,7 @@
 package com.megazone.ERPSystem_phase3_Common.common.user.service.basic_information_management.Users;
 
 import com.megazone.ERPSystem_phase3_Common.common.user.model.basic_information_management.employee.Employee;
+import com.megazone.ERPSystem_phase3_Common.common.user.model.basic_information_management.employee.dto.EmployeeDataDTO;
 import com.megazone.ERPSystem_phase3_Common.common.user.model.basic_information_management.employee.dto.EmployeeShowToDTO;
 import com.megazone.ERPSystem_phase3_Common.common.user.repository.basic_information_management.Employee.DepartmentRepository;
 import com.megazone.ERPSystem_phase3_Common.common.user.repository.basic_information_management.Employee.EmployeeRepository;
@@ -17,15 +18,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final DepartmentRepository departmentRepository;
 
     @Override
-    public void updateEmployee(EmployeeShowToDTO employeeDto) {
-        Employee employee = employeeRepository.findById(employeeDto.getId()).orElseThrow(
+    public void updateEmployee(EmployeeDataDTO employeeDto) {
+        Employee employee = employeeRepository.findById(employeeDto.getEmployeeId()).orElseThrow(
                 () -> new RuntimeException("해당하는 사원정보가 없습니다."));
 
         employee.setDepartment(
                 departmentRepository.findById(employeeDto.getDepartmentId()).orElseThrow(
                         () -> new RuntimeException("해당하는 부서가 없습니다.")));
 
-        employee.setEmployeeNumber(employeeDto.getEmployeeNumber());
+        employee.setEmployeeNumber(employeeDto.getRegistrationNumber());
         employee.setEmail(employeeDto.getEmail());
         employee.setFirstName(employeeDto.getFirstName());
         employee.setLastName(employeeDto.getLastName());
