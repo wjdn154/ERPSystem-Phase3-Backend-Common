@@ -8,6 +8,7 @@ import com.megazone.ERPSystem_phase3_Common.Integrated.model.dashboard.dto.Incom
 import com.megazone.ERPSystem_phase3_Common.Integrated.model.dashboard.dto.RecentActivityEntryDTO;
 import com.megazone.ERPSystem_phase3_Common.Integrated.repository.dashboard.EnvironmentalCertificationAssessmentRepository;
 import com.megazone.ERPSystem_phase3_Common.Integrated.repository.dashboard.RecentActivityRepository;
+import com.megazone.ERPSystem_phase3_Common.common.config.redis.RedisCacheable;
 import com.megazone.ERPSystem_phase3_Common.company.service.basic_information_management.company.FinancialService;
 import com.megazone.ERPSystem_phase3_Common.logistics.LogisticService;
 import com.megazone.ERPSystem_phase3_Common.production.ProductionService;
